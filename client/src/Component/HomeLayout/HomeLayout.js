@@ -55,11 +55,11 @@ const HomeLayout = () => {
                   <p className="product-description">
                     {product.product_description}
                   </p>
-                  <p className="product-price">
+                  <p className="product-price line-through font-normal text-sm">
                     Price: ${product.product_price}
                   </p>
                   <p className="product-offer">
-                    Offer: ${product.product_offer}
+                    Offer Price: ${product.product_offer}
                   </p>
                 </div>
                 {userRole === "admin" && (

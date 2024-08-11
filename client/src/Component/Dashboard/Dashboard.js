@@ -1,16 +1,20 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { InputField } from '../inputFields';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { toastMessage } from '../../utils/toasMessage';
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { InputField } from "../inputFields";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toastMessage } from "../../utils/toasMessage";
 
 const createProductSchema = Yup.object().shape({
-  productName: Yup.string().required('Product name is required'),
-  price: Yup.number().required('Price is required').positive('Price must be positive'),
-  description: Yup.string().required('Description is required'),
-  offer: Yup.number().required('Offer price is required').positive('Offer price must be positive'),
-  image: Yup.mixed().required('Image is required')
+  productName: Yup.string().required("Product name is required"),
+  price: Yup.number()
+    .required("Price is required")
+    .positive("Price must be positive"),
+  description: Yup.string().required("Description is required"),
+  offer: Yup.number()
+    .required("Offer price is required")
+    .positive("Offer price must be positive"),
+  image: Yup.mixed().required("Image is required"),
 });
 
 const Dashboard = ({ userId, role }) => {
@@ -19,7 +23,9 @@ const Dashboard = ({ userId, role }) => {
 
   const getUser = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/getUser/${userId}`);
+      const response = await axios.get(
+        `http://localhost:8000/api/getUser/${userId}`
+      );
       const { status, data, message } = response?.data;
       if (status === 1) {
         setUser({ ...data });
@@ -32,12 +38,14 @@ const Dashboard = ({ userId, role }) => {
     }
   };
 
-  const fetchProducts = async () => { 
+  const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/getAllProducts');
+      const response = await axios.get(
+        "http://localhost:8000/api/getAllProducts"
+      );
       setProducts(response?.data?.data || []);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     }
   };
 
@@ -46,7 +54,16 @@ const Dashboard = ({ userId, role }) => {
     fetchProducts();
   }, []);
 
-  const { handleChange, handleSubmit, setFieldValue, setValues, errors, values, touched, resetForm } = useFormik({
+  const {
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+    setValues,
+    errors,
+    values,
+    touched,
+    resetForm,
+  } = useFormik({
     initialValues: {
       productName: "",
       price: "",
@@ -57,23 +74,27 @@ const Dashboard = ({ userId, role }) => {
     validationSchema: createProductSchema,
     onSubmit: (values) => {
       handleCreateProduct(values);
-    }
+    },
   });
 
   const handleCreateProduct = async (values) => {
     try {
       const formData = new FormData();
-      formData.append('productName', values.productName);
-      formData.append('price', values.price);
-      formData.append('description', values.description);
-      formData.append('offer', values.offer);
-      formData.append('image', values.image);
+      formData.append("productName", values.productName);
+      formData.append("price", values.price);
+      formData.append("description", values.description);
+      formData.append("offer", values.offer);
+      formData.append("image", values.image);
 
-      const response = await axios.post(`http://localhost:8000/api/createProduct/${userId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post(
+        `http://localhost:8000/api/createProduct/${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
+      );
       const { status, message, data } = response?.data;
       if (status === 1) {
         toastMessage("success", message);
@@ -89,31 +110,46 @@ const Dashboard = ({ userId, role }) => {
   };
 
   const handleFileChange = (event) => {
-    setFieldValue('image', event.currentTarget.files[0]);
+    setFieldValue("image", event.currentTarget.files[0]);
   };
 
   return (
     <>
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4 text-[#ff4b30]">Welcome to the Shoppieee</h1>
+        <h1 className="text-3xl font-bold mb-4 text-[#ff4b30]">
+          Welcome to the Shoppieee
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-2">Total Products</h2>
             <p className="text-2xl font-bold">{products.length}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-2">Current Login User Details</h2>
+            <h2 className="text-xl font-semibold mb-2">
+              Current Login User Details
+            </h2>
             <div className="mt-4">
-              <p className="text-lg"><span className="font-semibold">User ID:</span> {user?.id}</p>
-              <p className="text-lg mt-2"><span className="font-semibold">User Name:</span> {user?.name}</p>
-              <p className="text-lg mt-2"><span className="font-semibold">User Email:</span> {user?.email}</p>
+              <p className="text-lg">
+                <span className="font-semibold">User ID:</span> {user?.id}
+              </p>
+              <p className="text-lg mt-2">
+                <span className="font-semibold">User Name:</span> {user?.name}
+              </p>
+              <p className="text-lg mt-2">
+                <span className="font-semibold">User Email:</span> {user?.email}
+              </p>
             </div>
           </div>
         </div>
       </div>
       <div className="border shadow-md rounded-md p-5 max-w-4xl mx-auto mb-5">
-        <h1 className="border-b text-lg font-medium pb-2 mb-2">Create New Product</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <h1 className="border-b text-lg font-medium pb-2 mb-2">
+          Create New Product
+        </h1>
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2"
+        >
           <div>
             <InputField
               htmlFor="productName"
@@ -125,7 +161,11 @@ const Dashboard = ({ userId, role }) => {
               value={values.productName}
               onChange={handleChange("productName")}
               error={errors.productName && touched.productName}
-              errText={errors.productName && touched.productName ? errors.productName : ""}
+              errText={
+                errors.productName && touched.productName
+                  ? errors.productName
+                  : ""
+              }
             />
           </div>
           <div>
@@ -139,7 +179,11 @@ const Dashboard = ({ userId, role }) => {
               value={values.description}
               onChange={handleChange("description")}
               error={errors.description && touched.description}
-              errText={errors.description && touched.description ? errors.description : ""}
+              errText={
+                errors.description && touched.description
+                  ? errors.description
+                  : ""
+              }
             />
           </div>
           <div>
@@ -159,7 +203,7 @@ const Dashboard = ({ userId, role }) => {
           <div>
             <InputField
               htmlFor="offer"
-              label="Product Offer"
+              label="Product Offer Price"
               type="number"
               placeholder="Please Enter Product offer"
               name="offer"
@@ -202,6 +246,6 @@ const Dashboard = ({ userId, role }) => {
       </div>
     </>
   );
-}
+};
 
 export default Dashboard;
